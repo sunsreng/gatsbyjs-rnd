@@ -1,42 +1,60 @@
-import { Link } from "gatsby"
-import PropTypes from "prop-types"
 import React from "react"
+import { Link } from "gatsby"
+import styles from "./header.module.scss"
+import useMetadata from "../hooks/use-metadata"
 
-const Header = ({ siteTitle }) => (
-  <header
-    style={{
-      background: `rebeccapurple`,
-      marginBottom: `1.45rem`,
-    }}
-  >
-    <div
-      style={{
-        margin: `0 auto`,
-        maxWidth: 960,
-        padding: `1.45rem 1.0875rem`,
-      }}
-    >
-      <h1 style={{ margin: 0 }}>
-        <Link
-          to="/"
-          style={{
-            color: `white`,
-            textDecoration: `none`,
-          }}
-        >
-          {siteTitle}
-        </Link>
-      </h1>
-    </div>
-  </header>
+// HeaderLink component
+const HeaderLink = ({ to, text }) => (
+  <Link className={styles.link} to={to}>
+    {text}
+  </Link>
 )
 
-Header.propTypes = {
-  siteTitle: PropTypes.string,
+// HomeButton component
+const HomeButton = ({ to, text }) => (
+  <Link to={to}>
+    <div className={styles.button}>{text}</div>
+  </Link>
+)
+
+// SocialButton component
+const SocialButton = ({ site, username, children }) => {
+  let style = ""
+  let url = ""
+
+  if (site === "twitter") {
+    style = styles.buttonTwitter
+    url = "https://twitter.com/" + username
+  } else if (site === "linkedin") {
+    style = styles.buttonLinkedin
+    url = "https://www.linkedin.com/in/" + username
+  } else if (site === "github") {
+    style = styles.buttonGithub
+    url = "https://www.github.com/" + username
+  }
+
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer">
+      <div className={style}>{children}&nbsp;</div>
+    </a>
+  )
 }
 
-Header.defaultProps = {
-  siteTitle: ``,
-}
+export default () => {
+  const { site } = useMetadata()
+  return (
+    <header className={styles.container}>
+      <div className={styles.row}>
+        <HomeButton to="/" text={site.siteMetadata.title} />
+        <SocialButton site="github" username="sun.sreng"></SocialButton>
+        <SocialButton site="linkedin" username="sun-sreng-b151214b"></SocialButton>
+        <SocialButton site="twitter" username="sunsreng"></SocialButton>
+      </div>
 
-export default Header
+      <div className={styles.row}>
+        <HeaderLink to="/" text="ARTICLES" />
+        <HeaderLink to="/about" text="ABOUT" />
+      </div>
+    </header>
+  )
+}
